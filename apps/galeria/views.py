@@ -29,7 +29,8 @@ def buscar(request):
         if nome_a_buscar:
             fotografias = fotografias.filter(nome__icontains=nome_a_buscar)
 
-    return render(request, "galeria/buscar.html", {"cards": fotografias})
+    return render(request, "galeria/index.html", {"cards": fotografias})
+    #return render(request, "galeria/buscar.html", {"cards": fotografias})
 
 def nova_imagem(request):
     if not request.user.is_authenticated:
@@ -46,8 +47,28 @@ def nova_imagem(request):
 
     return render(request, 'galeria/nova_imagem.html', {'form': form})
 
-def editar_imagem(request):
-    pass
+def editar_imagem(request, foto_id):
+    fotografia = Fotografia.objects.get(id=foto_id) #busca meu objeto no banco de dados pelo # do id
+    form = FotografiaForms(instance=fotografia)    #cria o formulário com o objeto que acabei de pegar
 
-def deletar_imagem(request):
-    pass
+    #se for POST eu quero que mude as características do meu formulário - quando o usuário clicar em editar a imagem
+    if request.method == 'POST':
+        #o que não tiver mudado, pega de fotografia
+        form = FotografiaForms(request.POST, request.FILES, instance=fotografia) 
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'fotografia editada com sucesso!')
+            return redirect('index')
+
+    return render(request, 'galeria/editar_imagem.html', {'form': form, 'foto_id': foto_id} )
+
+def deletar_imagem(request, foto_id):
+    fotografia = Fotografia.objects.get(id=foto_id) #busca meu objeto no banco de dados pelo # do id
+    fotografia.delete()
+    messages.success(request, 'fotografia deletada com sucesso!')
+    return redirect('index')
+
+
+def filtro(request, categoria):
+    fotografias = Fotografia.objects.order_by("data_fotografia").filter(publicada=True, categoria=categoria)
+    return render(request, 'galeria/index.html', {"cards": fotografias})
