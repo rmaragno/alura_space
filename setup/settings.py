@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
+
     'apps.galeria.apps.GaleriaConfig',
     'apps.usuarios.apps.UsuariosConfig',
 ]
@@ -140,12 +141,10 @@ MEDIA_URL = "/media/"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# messages
 
-#messages
 from django.contrib.messages import constants as messages
-
 MESSAGE_TAGS = {
-    messages.SUCCESS: "success",
-    messages.ERROR: "danger",
-    50: "critical",
+    messages.ERROR: 'danger',
+    messages.SUCCESS: 'success'
 }
